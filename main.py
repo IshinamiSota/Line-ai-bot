@@ -7,13 +7,15 @@ import base64
 
 app = Flask(__name__)
 
-LINE_CHANNEL_ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"
-LINE_CHANNEL_SECRET = "YOUR_CHANNEL_SECRET"
+LINE_CHANNEL_ACCESS_TOKEN = "fpYeoFSVtnMpt0DqKQLF3VN6ga44FN3Ayy9OUdct/alvFu/GpIwIw1nNv7kimN3tS9qgYo5dg9bz0lj0jMAXt7jZ+Dvlg/KHBf8o2L9lX4Oo9cwX7BjTGny+93lfde/A4kr6HBBZeIfEt6Boe3pS1gdB04t89/1O/w1cDnyilFU="
+LINE_CHANNEL_SECRET = "da4a94eb3f4cb9c6521bba9a761480fb"
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-openai.api_key = "YOUR_OPENAI_API_KEY"
+import os
+
+openai.api_key =os.getenv("OPENAI_API_KEY")
 
 @app.route("/callback", methods=['POST'])
 def callback():
