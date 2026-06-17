@@ -31,19 +31,30 @@ def callback():
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
+    # 画像データを取得
     message_content = line_bot_api.get_message_content(event.message.id)
-    image_bytes = message_content.content
-    image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    image_bytes = b"".join(message_content.iter_content())
 
+    # OpenAI Vision API に投げる
     response = openai.ChatCompletion.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "あなたは外壁診断と見積もりAIです。"},
-            {"role": "user", "content": [
-                {"type": "input_image", "image": image_base64},
-                {"type": "text", "text": "この外壁の状態を診断し、劣化レベルと概算見積もりを出してください。"}
-            ]}
+            {"role": "system", "content": "You are the facade diagnosis and estimation AI."},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_image", "image": image_bytes},
+                    {"type": "text", "text": "この外壁の状態を診断して、見積もりを出してください。"}
+                ]
+            }
         ]
+    )
+
+    reply_text = response.choices[0].message["content"]
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_text)
     )
 
     ai_reply = response["choices"][0]["message"]["content"]
